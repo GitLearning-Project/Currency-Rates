@@ -26,19 +26,7 @@ def display_currency_info(currency_data):
     else:
         print(f"Курс {code_valute} на текущий день неизвестен")
 
-
-URL = "https://cbr.ru/scripts/XML_daily.asp"
-currency_tree = get_currency_data(URL)
-
-user_case = int(input("Вывести информацию по коду валюты - введите 1\nВывести таблицу курсов всех валют к рублю - введите 2\n"))
-
-if user_case == 1:
-    # Вывод курса определённой валюты
-    code_valute = input("Введите код валюты: ").upper()
-    currency_data = get_currency_by_code(currency_tree, code_valute)
-    display_currency_info(currency_data)
-else:
-    # Вывод курсов всех валют по отношению к рублю
+def display_all_currency_rates(currency_tree):
     currency_rates = {}
 
     for valute in currency_tree.findall(".//Valute"):
@@ -50,3 +38,15 @@ else:
     print("--------------------")
     for char_code, value in currency_rates.items():
         print(f"{char_code}: {value}")
+
+URL = "https://cbr.ru/scripts/XML_daily.asp"
+currency_tree = get_currency_data(URL)
+
+user_case = int(input("Вывести информацию по коду валюты - введите 1\nВывести таблицу курсов всех валют к рублю - введите 2\n"))
+
+if user_case == 1:
+    code_valute = input("Введите код валюты: ").upper()
+    currency_data = get_currency_by_code(currency_tree, code_valute)
+    display_currency_info(currency_data)
+else:
+    display_all_currency_rates(currency_tree)
