@@ -1,5 +1,6 @@
 import requests
 import xml.etree.ElementTree as ET
+import datetime
 
 def get_currency_data(url):
     response = requests.get(url)
@@ -26,6 +27,14 @@ def display_currency_info(currency_data):
     else:
         print(f"Курс {code_valute} на текущий день неизвестен")
 
+def save_currency_exchange_rates(currency_rates):
+    with open("exchange_rates.txt", "a", encoding="utf-8") as file:
+        current_datetime = datetime.datetime.now()
+        file.write(f"Дата и время сохранения: {current_datetime}\n")
+        for char_code, value in currency_rates.items():
+            file.write(f"{char_code}: {value}\n")
+        file.write("--------------------------\n")
+
 def display_all_currency_rates(currency_tree):
     currency_rates = {}
 
@@ -33,11 +42,14 @@ def display_all_currency_rates(currency_tree):
         char_code = valute.find("CharCode").text
         value = valute.find("Value").text
         currency_rates[char_code] = value
-    
+
     print("Курсы валют к рублю:")
     print("--------------------")
     for char_code, value in currency_rates.items():
         print(f"{char_code}: {value}")
+    # Сохраняем список курсов в файл exchange_rates.txt
+    save_currency_exchange_rates(currency_rates)
+
 
 URL = "https://cbr.ru/scripts/XML_daily.asp"
 currency_tree = get_currency_data(URL)
